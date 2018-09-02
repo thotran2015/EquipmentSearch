@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Equipment Search Results</title>
+     
+    
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+ 
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+    <!--
+    <link href="../static/signup.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="main.css">
+    -->
+    
+  </head>
+ 
+  <body>
+ 
+    <div class="container">
+          <div class="header">
+                        <div class="menu">
+                            <nav>
+                              <ul class="nav nav-pills pull-right">
+                                <li role="presentation" class="active"><a href="/">Home</a></li>
+                                <li role="presentation" ><a href="/download/{{search_words}}/">Download Results</a></li>
+                              </ul>
+                            </nav> 
+                            <h3 class="text-muted">Equipment Valuation</h3>
+                        </div>
+                
+          </div>
+
+      <div class="jumbotron">
+        
+               
+            {% if condition == "new" %}
+            <h2> Replacement Value is: {{median}}</h2>
+            {% else %}
+            <h2> Free Market Value is: {{median}}</h2>
+            {% endif %}  
+            </div>
+
+      <div class="jumbotron">
+<!--
+            <form id="searchSortForm" method="post" action="/results/<search_words>/sort=price_desc" class="s-inline-form"><input type="hidden" name="keywords" value="sunscreen">
+                <input type="hidden" name="fst" value="as:on">
+                <input type="hidden" name="rh" value="k:sunscreen,n:3760911,n:11060451">
+                <input type="hidden" name="qid" value="1485719980">
+                <span class="a-size-base">Sort by&nbsp;</span>
+                <select class="a-spacing-top-mini" style="vertical-align: baseline;" name="sort" id="sort" onchange="">
+                    <option value="relevancerank">Relevance</option>
+                                    <option value="featured-rank">Featured</option>
+                                    <option value="price-asc-rank">Price: Low to High</option>
+                                    <option value="price-desc-rank"><a href="/results/{{search_words}}/sort=price_desc">Price: High to Low</a></option>
+                                    <option value="review-rank">Avg. Customer Review</option>
+                </select>
+                <noscript>&amp;lt;input type="image" src="https://images-na.ssl-images-amazon.com/images/G/01/buttons/go-orange-trans._CB192189913_.gif"  width="21" alt="Go" align="top" value="Go" height="21" border="0" /&amp;gt;</noscript>
+           
+           </form>
+-->
+               
+            {% if condition == "new" %}
+            <h2> Results for New Equipment with Keywords: {{search_words}}</h2>
+            {% else %}
+            <h2> Results for Used Equipment with Keywords: {{search_words}}</h2>
+            {% endif %}
+           
+                   
+
+                   <div class="result_table">
+
+                         <table>
+                                 
+                                    {% if sorted_result|length>0 %}
+                                        <tr style="padding: 0 15px 0 15px">
+                                            <td style="padding: 0 15px 0 15px">Image</td>
+                                            <td style="padding: 0 15px 0 15px">Title</td>
+                                            <td style="padding: 0 15px 0 15px">Price</td>
+                                        </tr>
+                                        {% for r in sorted_result %}
+                                              <tr style="padding: 0 15px 0 15px">
+                                              	<td style="padding: 0 15px 0 15px"><img src={{r.image_src}} alt="No Image" height= "75" width="75"></td>
+                                                <td style="padding: 0 15px 0 15px"> <a href={{r.url}}> {{r.title}}</a></td>
+                                                <td style="padding: 0 15px 0 15px">{{r.price}}</td>
+                                                
+                                              </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                       <p style="font-size:25px" > No Results Found </p>
+                                    {% endif %}
+
+                         </table>    
+                  </div>
+
+        </div>
+
+      <footer class="footer">
+        <p>Seeding Labs</p>
+      </footer>
+ 
+    </div>
+  </body>
+</html>

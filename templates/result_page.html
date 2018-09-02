@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Equipment Search Results</title>
+     
+    
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+ 
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+
+  </head>
+ 
+  <body>
+ 
+    <div class="container">
+          <div class="header">
+                        <div class="menu">
+                            <nav>
+                              <ul class="nav nav-pills pull-right">
+                                <li role="presentation" class="active"><a href="/">Home</a></li>
+                                <li role="presentation" ><a href="/download/{{condition}}/{{search_words}}/">Download Results</a></li>
+                              </ul>
+                            </nav> 
+                            <h3 class="text-muted">Equipment Valuation</h3>
+                        </div>
+                
+          </div>
+
+          <div class="jumbotron">
+        
+            {% if condition == "new" %}
+            <h2> Replacement Value is: {{median}}</h2>
+            {% else %}
+            <h2> Free Market Value is: {{median}}</h2>
+            {% endif %}  
+         </div>    
+      <div class="jumbotron">
+    
+            {% if condition == "new" %}
+            <h2> Results for New Equipment with Keywords: {{search_words}}</h2>
+            {% else %}
+            <h2> Results for Used Equipment with Keywords: {{search_words}}</h2>
+            {% endif %}
+           
+                   
+   
+                   <div class="result_table">
+
+                         <table>
+                             
+                                {% if result|length>0 %}
+                                    <tr style="padding: 0 15px 0 15px">
+                                        <td style="padding: 0 15px 0 15px">Image</td>
+                                        <td style="padding: 0 15px 0 15px">Title</td>
+                                        <td style="padding: 0 15px 0 15px">Price</td>
+                                    </tr>
+
+                                        {% for r in result %}
+                                              <tr style="padding: 0 15px 0 15px">
+                                              <td style="padding: 0 15px 0 15px"><img src={{r.image_src}} alt="No Image" height= "75" width="75"></td>
+                                              <td style="padding: 0 15px 0 15px"> <a href={{r.url}} target="_blank"> {{r.title}}</a></td>
+                                              <td style="padding: 0 15px 0 15px">{{r.price}}</td>
+        
+                                              </tr>
+                                        {% endfor %}
+                                {% else %}
+                                   <p style="font-size:25px" > No Results Found </p>
+                                {% endif %}
+
+                         </table>    
+                  </div>
+
+        </div>
+
+      <footer class="footer">
+        <p>Seeding Labs</p>
+      </footer>
+ 
+    </div>
+  </body>
+</html>
