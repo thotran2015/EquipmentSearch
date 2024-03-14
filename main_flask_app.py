@@ -49,20 +49,21 @@ def run_search(condition=None):
 
 @app.route('/download/<condition>/<search_words>/', methods=['GET'])
 def download_file(search_words, condition=None):
-    start_time=time.time()
-    web_index=0
-    continue_searching=True
-    results=[]
-    while continue_searching and web_index<20 and time.time()-start_time< 20 and len(results)<10:
-        continue_searching, message, new_results= backend.search_a_website(search_words,condition, web_index)
+    start_time = time.time()
+    web_index = 0
+    continue_searching = True
+    results = []
+    while continue_searching and web_index < 20 and time.time()-start_time < 20 and len(results) < 10:
+        continue_searching, message, new_results = backend.search_a_website(search_words, condition, web_index)
         results.extend(new_results)
-        web_index+=1
-    results=util.sort_by_price(results)
-    exported_list=[['Title','Price', 'Image', 'URL']]
+        web_index += 1
+    results = util.sort_by_price(results)
+    print("download: ", results)
+    exported_list = [['Title', 'Price', 'Image', 'URL']]
     for r in results:
         exported_list.append([r.title, r.price, r.image_src, r.url])
-    return excel.make_response_from_array(exported_list, "xls")
-   
+    return excel.make_response_from_array(exported_list, "csv", file_name="items")
+
 
 def finish(self):
          if not self.wfile.closed:
@@ -77,6 +78,7 @@ def finish(self):
          self.rfile.close()
 
 
-if __name__== "__main__":
+if __name__ == "__main__":
     port = int(environ.get('PORT', 5000))
+    excel.init_excel(app)
     app.run(host='127.0.0.1', port=port)

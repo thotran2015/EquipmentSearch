@@ -41,6 +41,8 @@ Formats a float to have 2 decimal places and a dollar sign
 @param float_price a float representing the price of the equipment
 @return a float whose format is Sfloat_price.00  representing the price of the equipment
 '''
+
+
 def price_prettify(float_price):
     try:
         return "$" +'{:20,.2f}'.format(float_price).replace(' ','')
@@ -54,24 +56,27 @@ Formats a float to have 2 decimal places and a dollar sign
 @param delimter, a single char indicating how the site searches multiple words e.g. '%20' or '+'
 @return specific_url, a String containing the main_url+search_words
 '''
+
+
 def create_url(main_url, search_term, delimiter):
-    specific_url=main_url
-    search_words=search_term.split()
+    specific_url = main_url
+    search_words = search_term.split()
     for i in range(len(search_words)):
-        if i!=0:
-            specific_url= specific_url + delimiter+ search_words[i]
+        if i != 0:
+            specific_url = specific_url + delimiter + search_words[i]
         else:
-            specific_url= specific_url + search_words[i]
+            specific_url = specific_url + search_words[i]
     return specific_url
 
 
-
-
-def check_exceptions(url, timeout = 5, headers = None):
+def check_exceptions(url, timeout=5):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
     try:
-        response = requests.get(url, timeout = 5, header = None)
+        response = requests.get(url, timeout, headers=headers)
         if response.status_code == 200:
-            return BeautifulSoup(response.content,"html.parser")
+            return BeautifulSoup(response.content, "html.parser")
         else:
             print(("Status code: ", response.status_code))
             print("try again")
@@ -79,7 +84,7 @@ def check_exceptions(url, timeout = 5, headers = None):
         print("This is timeout")
         print((str(e)))
     except requests.exceptions.RequestException:
-        print ("Error")
+        print("Error")
         
 '''
 sorts a list of Results by price
@@ -107,9 +112,9 @@ def median_price(results):
     prices.sort()
     length = len(prices)
     if length % 2 == 0:
-        if abs(prices[(length-1)/2]-avg) <= abs(prices[(length+1)/2]-avg):
-            return prices[(length-1)/2]
-        return prices[(length+1)/2]
+        if abs(prices[(length-1)//2]-avg) <= abs(prices[(length+1)//2]-avg):
+            return prices[(length-1)//2]
+        return prices[(length+1)//2]
     #Odd length prices list
-    return prices[(length-1)/2]
+    return prices[(length-1)//2]
     

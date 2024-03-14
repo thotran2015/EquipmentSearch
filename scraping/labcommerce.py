@@ -29,7 +29,7 @@ def extract_results(item,condition=None):
                         url = re.sub('/catid/','.php?catid=',row.find('a').get('href'))
                         #Omit last slash
                         specific_url = re.sub('/prodid/','&prodid=',url)[:-1]
-                        new_result.url = MAIN_URL+ specific_url.encode('utf-8').strip()
+                        new_result.url = MAIN_URL + specific_url.encode('utf-8').strip()
                         new_soup = BeautifulSoup(urllib.request.urlopen(new_result.url),"html.parser")
                         #Omit surrounding text, get decimal only
                         new_result.price = get_price(str(new_soup.find('td',class_='price').find_all(text=True)[0])\

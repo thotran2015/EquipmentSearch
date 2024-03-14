@@ -1,8 +1,7 @@
 import unittest
-#import the 14 websites
 import used_line
 import sci_bay
-from equipSites import dotmed, ebay, biosurplus, labcommerce, labx, google, equipnet, eurekaspot, marshallscientific, \
+import dotmed, ebay, biosurplus, labcommerce, labx, google, equipnet, eurekaspot, marshallscientific, \
 	medwow, newlifescientific, sibgene
 
 FUNCTIONS=[biosurplus.extract_results, \
