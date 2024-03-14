@@ -1,6 +1,6 @@
-'''
+"""
 This website sells pre-owned equipment
-'''
+"""
 import gzip
 import io
 import urllib.error

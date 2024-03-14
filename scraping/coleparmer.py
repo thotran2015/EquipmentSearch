@@ -18,30 +18,37 @@ HOME_URL = 'https://www.coleparmer.com'
 
 def extract_results(search_word, condition=None):
     url = util.create_url(MAIN_URL, search_word, DELIMITER)
-    page = urllib.request.urlopen(url)
-    soup = BeautifulSoup(page, "html.parser")
-    try:
-        product_contents = soup.find_all('div', class_='products-mnbox-content')
-    except:
-        return []
-
+    soup = util.check_exceptions(url)
     results = []
-    for product_content in product_contents:
-        equip_url = HOME_URL + product_content.find('a').get('href')
-        models_site = BeautifulSoup(urllib.request.urlopen(equip_url), "html.parser")
-        model_descriptions = models_site.find_all('td', class_='description')
+    try:
+        product_list_tag = soup.find('div', class_='products-list-section')
+        products = product_list_tag.find_all('li')
+    except Exception as e:
+        print("Error: ", e)
+        return results
 
-        for re in model_descriptions:
-            result = Result(re.find('div', {'id': 'gaProductName'}).find(text=True).strip())
-            result.image_src = 'https:' + re.find('img', class_='lazy').get('data-original')
-            result.url = HOME_URL + re.find('a').get('href')
-            price_site = BeautifulSoup(urllib.request.urlopen(result.url), "html.parser")
-            result.price = util.get_price(
-                price_site.find('div', class_='price-box').find('span', class_='price-range').find(text=True))
-            if util.is_valid_price(result.price):
-                results.append(result)
-            if len(results) >= 10:
+    for p in products:
+        try:
+            url = HOME_URL + p.find('a').get('href')
+            img_src = p.find('img', class_='lazy').get('data-original')
+            title = p.find('a').get('title')
+            price_range = p.find('span', class_='price-range')
+            if price_range.find('span', itemprop='lowPrice'):
+                price = price_range.find('span', itemprop='lowPrice').get('content')
+            else:
+                price = price_range.text
+                if '$' in price:
+                    price = price.replace('$', '')
+            new_result = Result(title)
+            new_result.url = url
+            new_result.image_src = img_src
+            new_result.price = util.get_price(price)
+            results.append(new_result)
+            if len(results) == 10:
                 return results
+        except Exception as e:
+            print("Error for product: ", p, e)
+
     return results
 
 

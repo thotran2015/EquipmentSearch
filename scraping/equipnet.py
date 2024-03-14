@@ -1,13 +1,12 @@
-'''
-Created by Abigail Katcoff (complete)
+"""
 This website sells used equipment
-'''
+"""
 import util
 import urllib.request, urllib.error, urllib.parse
 from bs4 import BeautifulSoup
 from Result import Result
 
-SITE_URL = "http://www.equipnet.com"
+HOME_URL = "http://www.equipnet.com"
 MAIN_URL = "http://www.equipnet.com/search/?q="
 DELIMITER = "%20"
 
@@ -16,10 +15,6 @@ def extract_results(search_term, condition=None):
 	if condition == 'new':
 		return []
 	url = util.create_url(MAIN_URL, search_term, DELIMITER)
-	print("url:", url)
-	# page = urllib.request.urlopen(url)
-	# print("page: ", page)
-	# soup = BeautifulSoup(page, "html.parser")
 	soup = util.check_exceptions(url)
 	table = soup.find('div', class_="search-results-container")
 	rows = table.findAll("div", class_="row")
@@ -35,7 +30,7 @@ def extract_results(search_term, condition=None):
 		url_tag = row.find('a', href=True)
 		url = url_tag['href'] if url_tag else None
 		if url and 'http' not in url:
-			url = SITE_URL + url
+			url = HOME_URL + url
 		# Extract image URL
 		image_tag = row.find('img', class_='list-view-thumbnail')
 		image_url = image_tag['src'] if image_tag else None
