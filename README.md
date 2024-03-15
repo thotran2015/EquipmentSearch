@@ -3,7 +3,7 @@ Seeding Labs
 Abigail Katcoff '18, Tho Tran '19, Venita Boodhoo '18
 
 Project Description
-Our app, "main_flask_app.py", found at http://seedinglabsequipmentvaluation.herokuapp.com, allows users to search multiple websites for used or new lab equipment, finds the median value, and returns a list of results. Users also have the option to download a csv file (editable in Microsoft Excel) of the results, including url, price, and title.
+Our app, "main_flask_app.py", found at https://equip-search-2e33e9b172fc.herokuapp.com/, allows users to search multiple websites for used or new lab equipment, finds the median value, and returns a list of results. Users also have the option to download a csv file (editable in Microsoft Excel) of the results, including url, price, and title.
 _________________________________________________________________
 Project Structure
 
