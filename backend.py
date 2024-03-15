@@ -81,8 +81,8 @@ def search_a_website(search_term, condition=None, website_number=0):
     function_list = NEW_FUNCS if condition == 'new' else USED_FUNCS
     if website_number >= len(function_list):
         return False, error_message, []
+    func = function_list[website_number]
     try:
-        func = function_list[website_number]
         print("scraping ", WEBSITE_NAMES[func])
         website_results = func(search_term, condition)
         for website_result in website_results:
@@ -92,7 +92,7 @@ def search_a_website(search_term, condition=None, website_number=0):
                 return True, error_message, results
     except Exception as e:
         print("Error scraping ", WEBSITE_NAMES[func])
-        print("Error was: ", e.message)
+        print("Error was: ", e)
         error_message = error_message + "Error scraping %s.\n" % (WEBSITE_NAMES[func])
     return True, error_message, results
 
