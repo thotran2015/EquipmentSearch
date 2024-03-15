@@ -1,7 +1,7 @@
 # certifi==2018.8.24
 # click==6.7
-Flask==latest
+Flask==3.0.x
 # itsdangerous==0.24
-Jinja2==latest
+Jinja2==3.1.x
 # MarkupSafe==1.0
 # Werkzeug==0.14.1
