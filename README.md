@@ -59,4 +59,3 @@ To make changes to the website, commit and run "git push heroku master."
 
 If the website is buggy, you can run "heroku logs" to locate the problem.
 # seedingLabs
-# seedingLabs
