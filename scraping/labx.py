@@ -27,7 +27,7 @@ def extract_results(item, condition=None):
     results = []
     # Check if page has data
     try:
-        soup = util.check_exceptions(url)
+        soup = util.get_soup(url)
         table = soup.find('tbody', class_='ResultsNewTable')
         rows = table.find_all('tr')
     except:

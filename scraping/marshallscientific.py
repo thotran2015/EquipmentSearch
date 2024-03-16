@@ -21,7 +21,7 @@ def extract_results(search_word, condition=None):
         return []
     url = util.create_url(MAIN_URL, search_word, DELIMITER)
     try:
-        soup = util.check_exceptions(url)
+        soup = util.get_soup(url)
         product_grid = soup.find('div', class_='v-product-grid')
         if not product_grid:
             return []

@@ -21,7 +21,7 @@ HOME_URL = 'http://www.ika.com'
 def extract_results(search_word, condition=None):
     url = util.create_url(MAIN_URL, search_word, DELIMITER)
     try:
-        soup = util.check_exceptions(url)
+        soup = util.get_soup(url)
         product_table = soup.find('table', class_='table_content')
         result_links = product_table.find_all('a')
     except:

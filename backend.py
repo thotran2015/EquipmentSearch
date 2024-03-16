@@ -1,8 +1,6 @@
 # import the 17 websites
-import used_line
-import sci_bay
 from scraping import dotmed, ebay, biosurplus, daigger, labcommerce, labx, google, equipnet, eurekaspot, \
-    marshallscientific, medwow, newlifescientific, sibgene
+    marshallscientific, medwow, newlifescientific, sibgene, used_line, sci_bay
 
 import math
 USED_FUNCS = [equipnet.extract_results, marshallscientific.extract_results]
@@ -41,24 +39,36 @@ USED_FUNCS = [equipnet.extract_results, marshallscientific.extract_results]
 # medwow.extract_results, \
 # sibgene.extract_results
 # ]
-# NEW_FUNCS = [daigger.extract_results, \
-#              dotmed.extract_results
-#              ]
+NEW_FUNCS = [daigger.extract_results, dotmed.extract_results]
+USED_WEBSITES = ["equipnet", "labx", "ebay", "dotmed", "google", "biosurplus", "medwow", "labcommerce",
+                 "marshallscientific", "newlifescientific", "eurekaspot", "sci_bay", "sibgene", "used_line"]
+NEW_WEBSITES= ["daigger", "ika", "dotmed", "ebay", "google", "labx", "medwow", "ibgene", "coleparmer"]
 
-NEW_FUNCS = []
+WEBSITES = {"ebay": ebay.extract_results,
+            "equipnet": equipnet.extract_results,
+            "google": google.extract_results,
+            "used line": used_line.extract_results,
+            "eurekaspot": eurekaspot.extract_results,
+            "labcommerce": labcommerce.extract_results,
+            "newlifescientific": newlifescientific.extract_results,
+            "biosurplus": biosurplus.extract_results,
+             "sci_bay": sci_bay.extract_results,
+             "dotmed": dotmed.extract_results,
+             "sibgene": sibgene.extract_results,
+            "labx": labx.extract_results,
+            "medwow": medwow.extract_results,
+            "marshallscientific": marshallscientific.extract_results,
+            "daigger": daigger.extract_results
+            }
 
-# WEBSITE_NAMES={ebay.extract_results : "ebay" , equipnet.extract_results : "equipnet" , google.extract_results : "google" , used_line.extract_results : "used line", \
-# eurekaspot.extract_results : "eurekaspot", labcommerce.extract_results :"labcommerce", newlifescientific.extract_results :"newlifescientific", biosurplus.extract_results: "biosurplus" , sci_bay.extract_results : "sci_bay", \
-# dotmed.extract_results : "dotmed" , sibgene.extract_results: "sibgene" , labx.extract_results : "labx", medwow.extract_results: "medwow", marshallscientific.extract_results: \
-# "marshallscientific", daigger.extract_results: "daigger", coleparmer.gextract_results: "coleparmer", ika.extract_results: "ika"}
 
 WEBSITE_NAMES = {ebay.extract_results: "ebay", equipnet.extract_results: "equipnet", google.extract_results: "google",
-                 used_line.extract_results: "used line", \
+                 used_line.extract_results: "used line",
                  eurekaspot.extract_results: "eurekaspot", labcommerce.extract_results: "labcommerce",
                  newlifescientific.extract_results: "newlifescientific", biosurplus.extract_results: "biosurplus",
-                 sci_bay.extract_results: "sci_bay", \
+                 sci_bay.extract_results: "sci_bay",
                  dotmed.extract_results: "dotmed", sibgene.extract_results: "sibgene", labx.extract_results: "labx",
-                 medwow.extract_results: "medwow", marshallscientific.extract_results: \
+                 medwow.extract_results: "medwow", marshallscientific.extract_results:
                      "marshallscientific", daigger.extract_results: "daigger"}
 MATCH_RATIO = .8
 

@@ -15,7 +15,7 @@ def extract_results(search_term, condition=None):
 	if condition == 'new':
 		return []
 	url = util.create_url(MAIN_URL, search_term, DELIMITER)
-	soup = util.check_exceptions(url)
+	soup = util.get_soup(url)
 	table = soup.find('div', class_="search-results-container")
 	rows = table.findAll("div", class_="row")
 	results = []

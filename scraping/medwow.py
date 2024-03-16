@@ -18,7 +18,7 @@ def extract_results(search_word, condition=None):
     url = util.create_url(MAIN_URL, search_word, DELIMITER)
     url = url if condition != "new" else url + '&Condition=5067'
     try:
-        soup = util.check_exceptions(url)
+        soup = util.get_soup(url)
         product_grid = soup.find('div', class_='pagebody')
         total_equips = product_grid.find_all('div', class_='el')
     except:

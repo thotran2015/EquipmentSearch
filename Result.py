@@ -6,11 +6,11 @@ This class represents one search result corresponding to one item of equipment o
 
 
 class Result:
-    def __init__(self, title):
-        self.image_src = "http://dhakaprice.com/images/No-image-found.jpg"
+    def __init__(self, title, url=None, price=None, img_src="http://dhakaprice.com/images/No-image-found.jpg"):
         self.title = title
-        self.url = None
-        self.price = None
+        self.url = url
+        self.price = price
+        self.image_src = img_src
         self.origin_website = None
 
     def __str__(self):

@@ -1,6 +1,5 @@
 import unittest
-import used_line
-import sci_bay
+from scraping import used_line, sci_bay
 import dotmed, ebay, biosurplus, labcommerce, labx, google, equipnet, eurekaspot, marshallscientific, \
 	medwow, newlifescientific, sibgene
 

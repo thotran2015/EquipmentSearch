@@ -18,7 +18,7 @@ HOME_URL = 'https://www.coleparmer.com'
 
 def extract_results(search_word, condition=None):
     url = util.create_url(MAIN_URL, search_word, DELIMITER)
-    soup = util.check_exceptions(url)
+    soup = util.get_soup(url)
     results = []
     try:
         product_list_tag = soup.find('div', class_='products-list-section')
