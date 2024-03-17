@@ -25,9 +25,7 @@ def extract_results(search_term, condition=None):
 
 	r = requests.get(url, timeout=5, headers=headers)
 	soup = BeautifulSoup(r.content, "html.parser")
-	print("soup: ", soup)
 	table = soup.find('div', id='search')
-	print("table: ", soup.find_all("div", class_="sh-dgr__grid-result"))
 	try:
 		rows = table.findAll('div', class_='psli')
 	except:

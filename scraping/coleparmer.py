@@ -37,8 +37,6 @@ def extract_results(search_word, condition=None):
                 price = price_range.find('span', itemprop='lowPrice').get('content')
             else:
                 price = price_range.text
-                if '$' in price:
-                    price = price.replace('$', '')
             new_result = Result(title)
             new_result.url = url
             new_result.image_src = img_src

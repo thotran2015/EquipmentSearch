@@ -4,21 +4,20 @@ from scraping import dotmed, ebay, biosurplus, daigger, labcommerce, labx, googl
 
 import math
 
-USED_FUNCS = [equipnet.extract_results, marshallscientific.extract_results]
-# USED_FUNCS = [equipnet.extract_results,
-#               labx.extract_results,
-#               ebay.extract_results,
-#               dotmed.extract_results,
-#               google.extract_results,
-#               biosurplus.extract_results,
-#               medwow.extract_results,
-#               labcommerce.extract_results,
-#               marshallscientific.extract_results,
-#               newlifescientific.extract_results,
-#               eurekaspot.extract_results,
-#               sci_bay.extract_results,
-#               sibgene.extract_results,
-#               used_line.extract_results]
+USED_FUNCS = [equipnet.extract_results,
+              labx.extract_results,
+              ebay.extract_results,
+              dotmed.extract_results,
+              google.extract_results,
+              biosurplus.extract_results,
+              medwow.extract_results,
+              labcommerce.extract_results,
+              marshallscientific.extract_results,
+              newlifescientific.extract_results,
+              eurekaspot.extract_results,
+              sci_bay.extract_results,
+              sibgene.extract_results,
+              used_line.extract_results]
 #
 # TODO include coleparmer
 # NEW_FUNCS=[daigger.extract_results, \
@@ -76,16 +75,33 @@ MAX_RESULTS = 10
 
 MIN_RESULTS = 3
 
-'''
-searches a website until MAX_RESULTS close results are found
-@param search_term: string, 
-@param condition: string ("new" or "used") 
-@param website_number: the index of the website to search
-returns website_number_valid (boolean), message (string), results (list of Results)
-'''
+
+def search(website, search_term, condition):
+    func = WEBSITES.get(website)
+    results = []
+    error_message = ""
+    try:
+        site_results = func(search_term, condition)
+        for website_result in site_results:
+            if is_close_match(search_term, website_result.title):
+                results.append(website_result)
+            if len(results) >= MAX_RESULTS:
+                return error_message, results
+    except Exception as e:
+        error_message = f"Error scraping {website}: {e}"
+        print(error_message)
+    finally:
+        return error_message, results
 
 
 def search_a_website(search_term, condition=None, website_number=0):
+    """
+    searches a website until MAX_RESULTS close results are found
+    @param search_term: string,
+    @param condition: string ("new" or "used")
+    @param website_number: the index of the website to search
+    returns website_number_valid (boolean), message (string), results (list of Results)
+    """
     results = []
     error_message = ""
     function_list = NEW_FUNCS if condition == 'new' else USED_FUNCS
@@ -107,13 +123,11 @@ def search_a_website(search_term, condition=None, website_number=0):
     return True, error_message, results
 
 
-'''
-checks if the result contains at least MATCH_RATIO of the search words
-search_term, result_term are strings
-'''
-
-
 def is_close_match(search_term, result_term):
+    """
+    checks if the result contains at least MATCH_RATIO of the search words
+    search_term, result_term are strings
+    """
     search_words = search_term.split()
     match_number = 0
     for word in search_words:
