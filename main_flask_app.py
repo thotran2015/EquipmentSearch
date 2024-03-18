@@ -8,13 +8,13 @@ import time
 import io
 import socket
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 app.secret_key = "My secret"
 
 
 @app.route('/')
 def main_page():
-    return render_template('main_equipment_page.html')
+    return render_template('index.html')
 
 
 @app.route('/search/<condition>/')
@@ -26,7 +26,7 @@ def display_search_page(condition=None):
 
 @app.route('/results/<condition>/')
 def run_search(condition=None):
-    search_words = request.args.get('search')
+    search_words = request.args.get('q')
     # web_index is the  index of the website to begin or continue searching
     web_index = 0 if request.args.get('web_index') is None else int(request.args.get('web_index'))
     start_time = time.time()
