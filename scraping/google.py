@@ -16,7 +16,6 @@ DELIMITER = '+'
 def extract_results(search_term, condition=None):
 	url = util.create_url(MAIN_URL, search_term, DELIMITER)
 	url = url + '&tbs=vw:l,mr:1,new:1' if condition == 'new' else url
-	print("url: ", url)
 	headers = {
 			'Connection': 'keep-alive',
 			'Accept': 'text/html',

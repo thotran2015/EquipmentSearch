@@ -28,7 +28,7 @@ def display_search_page(condition=None):
 def run_search(condition=None):
     search_words = request.args.get('q')
     # web_index is the  index of the website to begin or continue searching
-    web_index = 0 if request.args.get('web_index') is None else int(request.args.get('web_index'))
+    web_index = int(request.args.get('web_index', 0))
     start_time = time.time()
     continue_searching = True
     message = ""
@@ -43,7 +43,7 @@ def run_search(condition=None):
         web_index += 1
     # if we ran out of time and got few results, continue the search where we left off in a redirect
     if continue_searching and len(results) < 4 and web_index < 20:
-        return redirect("/results/%s/?web_index=%s&search=%s" % (condition, web_index, search_words))
+        return redirect("/results/%s/?web_index=%s&q=%s" % (condition, web_index, search_words))
     results = util.sort_by_price(results)
     median = util.price_prettify(util.median_price(results))
     for item in results:
