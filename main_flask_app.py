@@ -43,15 +43,16 @@ def run_search(condition=None):
         web_index += 1
     # if we ran out of time and got few results, continue the search where we left off in a redirect
     if continue_searching and len(results) < 4 and web_index < 20:
-        return redirect("/results/%s/?web_index=%s&q=%s" % (condition, web_index, search_words))
+        return redirect(f"/results/{condition}/?web_index={web_index}&q={search_words}")
+
+    # Sort results by price
     results = util.sort_by_price(results)
     median = util.price_prettify(util.median_price(results))
-    for item in results:
-        item.price = util.price_prettify(util.str_to_float(item.price))
 
-    # Saving results for download
+    # Format prices and save results for download
     session["results"] = [['Title', 'Price', 'Image', 'URL']]
     for r in results:
+        r.price = util.price_prettify(util.str_to_float(r.price))
         session["results"].append([r.title, r.price, r.image_src, r.url])
     return render_template('result_page.html', search_words=search_words, result=results,
                            median=median, message=message, condition=condition)

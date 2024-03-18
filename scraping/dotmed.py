@@ -19,8 +19,7 @@ DELIMITER = '+'
 def extract_results(search_word, condition=None):
     url = util.create_url(MAIN_URL, search_word, DELIMITER)
     url = url + '&cond=used' if condition != 'new' else url + '&cond=new'
-    page = urllib.request.urlopen(url)
-    soup = BeautifulSoup(page, "html.parser")
+    soup = util.get_soup(url)
     product_grid = soup.find('div', id='totalListings')
     equips = []
     try:

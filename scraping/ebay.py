@@ -20,8 +20,7 @@ def extract_results(search_term, condition=None):
         url = util.create_url(MAIN_URL, search_term, DELIMITER) + '&LH_BIN=1' + NEW
     else:
         url = util.create_url(MAIN_URL, search_term, DELIMITER) + '&LH_BIN=1' + USED
-    page = urllib.request.urlopen(url)
-    soup = BeautifulSoup(page, "html.parser")
+    soup = util.get_soup(url)
     table = soup.find('div', id='ResultSetItems')
     try:
         rows = table.findAll('li', class_='sresult lvresult clearfix li')
