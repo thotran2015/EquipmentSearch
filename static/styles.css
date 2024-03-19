@@ -75,3 +75,17 @@ footer p {
     font-size: 14px;
     color: #666;
 }
+
+/* Tab styles */
+.tablink {
+    text-decoration: none; /* Remove default underline */
+}
+
+.tablink.active {
+    background-color: #ddd;
+}
+
+.tablink:hover {
+    text-decoration: underline; /* Change background color on hover */
+}
+
