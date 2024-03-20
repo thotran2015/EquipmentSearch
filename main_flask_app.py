@@ -7,6 +7,7 @@ from os import environ
 import time
 import io
 import socket
+import threading
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = "My secret"
@@ -27,23 +28,28 @@ def display_search_page(condition=None):
 @app.route('/results/<condition>/')
 def run_search(condition=None):
     search_words = request.args.get('q')
-    # web_index is the  index of the website to begin or continue searching
-    web_index = int(request.args.get('web_index', 0))
-    start_time = time.time()
-    continue_searching = True
-    message = ""
     results = []
-    # time the result to make sure it makes heroku's 30 second timeout
-    # stop searching if we have 10 or more results, run out of time, or finish searching relevant websites
-    # check if web_index is less than 20 to ensure the while loop ends
-    while continue_searching and web_index < 10 and time.time() - start_time < 20 and len(results) < 10:
-        continue_searching, new_message, new_results = backend.search_a_website(search_words, condition, web_index)
-        results.extend(new_results)
-        message = message + new_message
-        web_index += 1
-    # if we ran out of time and got few results, continue the search where we left off in a redirect
-    if continue_searching and len(results) < 4 and web_index < 20:
-        return redirect(f"/results/{condition}/?web_index={web_index}&q={search_words}")
+    threads = []
+    lock = threading.Lock()
+    stop_event = threading.Event()
+    websites = backend.USED_WEBSITES if condition == 'used' else backend.NEW_WEBSITES
+    for site in websites:
+        thread = threading.Thread(target=backend.search_a_website,
+                                  args=(site, search_words, results, lock, stop_event, condition))
+        thread.start()
+        threads.append(thread)
+
+    # Set a timer to stop threads after 25s, Heroku timeout is 30s
+    timer = threading.Timer(25, stop_event.set)
+    timer.start()
+
+    # Wait for all threads to complete or until stop condition is met or until timer expires
+    for t in threads:
+        t.join()  # Wait for this thread to terminate
+        if len(results) >= 10:
+            break
+    # Cancel timer if it has not expired
+    timer.cancel()
 
     # Sort results by price
     results = util.sort_by_price(results)
@@ -55,7 +61,7 @@ def run_search(condition=None):
         r.price = util.price_prettify(util.str_to_float(r.price))
         session["results"].append([r.title, r.price, r.image_src, r.url])
     return render_template('result_page.html', search_words=search_words, result=results,
-                           median=median, message=message, condition=condition)
+                           median=median, condition=condition)
 
 
 @app.route('/download/<condition>/<search_words>/', methods=['GET'])

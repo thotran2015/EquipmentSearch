@@ -1,8 +1,11 @@
 # import the 17 websites
+import threading
+
 from scraping import dotmed, ebay, biosurplus, daigger, labcommerce, labx, google, equipnet, eurekaspot, \
     marshallscientific, medwow, newlifescientific, sibgene, used_line, sci_bay
 
 import math
+import time
 
 USED_FUNCS = [equipnet.extract_results,
               labx.extract_results,
@@ -40,9 +43,9 @@ USED_FUNCS = [equipnet.extract_results,
 # sibgene.extract_results
 # ]
 NEW_FUNCS = [daigger.extract_results, dotmed.extract_results]
-USED_WEBSITES = ["equipnet", "labx", "ebay", "dotmed", "google", "biosurplus", "medwow", "labcommerce",
-                 "marshallscientific", "newlifescientific", "eurekaspot", "sci_bay", "sibgene", "used_line"]
-NEW_WEBSITES = ["daigger", "ika", "dotmed", "ebay", "google", "labx", "medwow", "ibgene", "coleparmer"]
+USED_WEBSITES = {"equipnet", "labx", "ebay", "dotmed", "google", "biosurplus", "medwow", "labcommerce",
+                 "marshallscientific", "newlifescientific", "eurekaspot", "sci_bay", "sibgene", "used_line"}
+NEW_WEBSITES = {"daigger", "ika", "dotmed", "ebay", "google", "labx", "medwow", "ibgene", "coleparmer"}
 
 WEBSITES = {"ebay": ebay.extract_results,
             "equipnet": equipnet.extract_results,
@@ -94,33 +97,44 @@ def search(website, search_term, condition):
         return error_message, results
 
 
-def search_a_website(search_term, condition=None, website_number=0):
+def search_a_website(website, search_term, results, lock, stop_event, condition='used') -> (bool, str):
     """
     searches a website until MAX_RESULTS close results are found
+    @param website: string,
     @param search_term: string,
+    @param results: list,
+    @param lock: Threading.Lock,
+    @param stop_event: threading event for exiting threads gracefully,
     @param condition: string ("new" or "used")
-    @param website_number: the index of the website to search
     returns website_number_valid (boolean), message (string), results (list of Results)
     """
-    results = []
     error_message = ""
-    function_list = NEW_FUNCS if condition == 'new' else USED_FUNCS
-    if website_number >= len(function_list):
-        return False, error_message, []
-    func = function_list[website_number]
+    if condition == 'used' and website not in USED_WEBSITES:
+        return False, "This site does not sell used equipment"
+    if condition == 'new' and website not in NEW_WEBSITES:
+        return False, "This site does not sell new equipment"
+
+    func = WEBSITES.get(website)
     try:
         print("scraping ", WEBSITE_NAMES[func])
         website_results = func(search_term, condition)
         for website_result in website_results:
+            # Check if stop event is set
+            if stop_event.is_set():
+                return True, error_message
             if is_close_match(search_term, website_result.title):
+                # Acquire lock to safely update the results dictionary
+                lock.acquire()
                 results.append(website_result)
+                lock.release()
             if len(results) >= MAX_RESULTS:
-                return True, error_message, results
+                stop_event.set()
+                return True, error_message
     except Exception as e:
-        print("Error scraping ", WEBSITE_NAMES[func])
-        print("Error was: ", e)
-        error_message = error_message + "Error scraping %s.\n" % (WEBSITE_NAMES[func])
-    return True, error_message, results
+        error_message = f"Error scraping {website}: {e}"
+        print(error_message)
+    finally:
+        return True, error_message
 
 
 def is_close_match(search_term, result_term):
@@ -137,8 +151,26 @@ def is_close_match(search_term, result_term):
 
 
 def main():
-    for i in range(10):
-        print(search_a_website("vacuum", condition='old', website_number=i))
+    lock = threading.Lock()
+    stop_event = threading.Event()
+    threads = []
+    results = []
+    start = time.time()
+    keywords = "vacuum"
+    condition = 'used'
+    for website in USED_WEBSITES:
+        thread = threading.Thread(target=search_a_website, args=(website, keywords, results, lock, stop_event, condition))
+        thread.start()
+        threads.append(thread)
+
+    # Wait for all threads to complete or until stop condition is met
+    for t in threads:
+        t.join()  # Wait for this thread to terminate
+        if len(results) >= MAX_RESULTS:
+            break
+
+    print("Time elapsed: ", time.time()-start)
+    print("Results: ", results)
 
 
 if __name__ == "__main__":
