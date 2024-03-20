@@ -5,56 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Equipment Search Results</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='result_styles.css') }}" rel="stylesheet">
+  <link href=" {{ url_for('static', filename='result_styles.css') }}" rel="stylesheet">
 </head>
+
 <body>
-
 <div class="container">
-  <div class="header">
-    <h3 class="text-muted">Equipment Valuation and Search</h3>
+  <header>
+  <div class="valuation-header">
+    <h2>Results for {{ condition|capitalize }} Equipment with Keywords: {{ search_words }}</h2>
+    <h3>Median {{ condition|capitalize }} Value: {{ median }}</h3>
   </div>
+    <nav class="valuation-nav">
+      <a class="valuation-link" href="/">Home</a>
+      <a class="valuation-link" href="/download/{{ condition }}/{{ search_words }}/">Download Results</a>
+    </nav>
+  </header>
 
-  <div class="jumbotron">
-    {% if condition == "new" %}
-      <h2>Replacement Value is: {{median}}</h2>
-    {% else %}
-      <h2>Free Market Value is: {{median}}</h2>
-    {% endif %}
-  </div>
+  <main role="main">
 
-  <div class="jumbotron">
-    {% if condition == "new" %}
-      <h2>Results for New Equipment with Keywords: {{search_words}}</h2>
-    {% else %}
-      <h2>Results for Used Equipment with Keywords: {{search_words}}</h2>
-    {% endif %}
+    <ul class="search-results">
+      {% for r in result %}
+      <li class="result-item">
+        <img src="{{ r.image_src }}" alt="No Image">
+        <div class="result-info">
+          <h4><a href="{{ r.url }}" target="_blank">{{ r.title }}</a></h4>
+          <p class="price">{{ r.price }}</p>
+          <p class="description">{{ r.description }}</p>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </main>
 
-    <div class="result_table">
-      <table>
-        {% if result|length > 0 %}
-          <tr>
-            <th>Image</th>
-            <th>Title</th>
-            <th>Price</th>
-          </tr>
-          {% for r in result %}
-            <tr>
-              <td><img src="{{ r.image_src }}" alt="No Image" height="75" width="75"></td>
-              <td><a href="{{ r.url }}" target="_blank">{{ r.title }}</a></td>
-              <td>{{ r.price }}</td>
-            </tr>
-          {% endfor %}
-        {% else %}
-          <tr>
-            <td colspan="3"><p>No Results Found</p></td>
-          </tr>
-        {% endif %}
-      </table>
-    </div>
-  </div>
-    <footer class="footer">
-        <p>&copy; 2024 Equipment Valuation and Search. All rights reserved.</p>
-    </footer>
+  <footer class="footer">
+    <p>&copy; 2024 Equipment Valuation and Search. All rights reserved.</p>
+  </footer>
 </div>
 
 </body>
