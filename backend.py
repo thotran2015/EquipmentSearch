@@ -51,12 +51,12 @@ WEBSITES = {"ebay": ebay.extract_results,
             "equipnet": equipnet.extract_results,
             "google": google.extract_results,
             "used line": used_line.extract_results,
-            "eurekaspot": eurekaspot.extract_results,
-            "labcommerce": labcommerce.extract_results,
-            "newlifescientific": newlifescientific.extract_results,
+            # "eurekaspot": eurekaspot.extract_results,
+            # "labcommerce": labcommerce.extract_results,
+            # "newlifescientific": newlifescientific.extract_results,
             "biosurplus": biosurplus.extract_results,
             "sci_bay": sci_bay.extract_results,
-            "dotmed": dotmed.extract_results,
+            # "dotmed": dotmed.extract_results,
             "sibgene": sibgene.extract_results,
             "labx": labx.extract_results,
             "medwow": medwow.extract_results,
@@ -64,14 +64,6 @@ WEBSITES = {"ebay": ebay.extract_results,
             "daigger": daigger.extract_results
             }
 
-WEBSITE_NAMES = {ebay.extract_results: "ebay", equipnet.extract_results: "equipnet", google.extract_results: "google",
-                 used_line.extract_results: "used line",
-                 eurekaspot.extract_results: "eurekaspot", labcommerce.extract_results: "labcommerce",
-                 newlifescientific.extract_results: "newlifescientific", biosurplus.extract_results: "biosurplus",
-                 sci_bay.extract_results: "sci_bay",
-                 dotmed.extract_results: "dotmed", sibgene.extract_results: "sibgene", labx.extract_results: "labx",
-                 medwow.extract_results: "medwow", marshallscientific.extract_results:
-                     "marshallscientific", daigger.extract_results: "daigger"}
 MATCH_RATIO = .8
 
 MAX_RESULTS = 10
@@ -115,8 +107,10 @@ def search_a_website(website, search_term, results, lock, stop_event, condition=
         return False, "This site does not sell new equipment"
 
     func = WEBSITES.get(website)
+    if func is None:
+        return False, f"No scraping func for this site {website}"
     try:
-        print("scraping ", WEBSITE_NAMES[func])
+        print("scraping ", website)
         website_results = func(search_term, condition)
         for website_result in website_results:
             # Check if stop event is set
