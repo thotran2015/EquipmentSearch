@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Equipment Valuation and Search</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='index_styles.css') }}">
 </head>
 <body>
     <div class="container">
@@ -14,21 +14,21 @@
         </header>
         <main>
             <nav role="navigation">
-                <a class="tablink active" href="#new" onclick="openTab(event, 'new')">New Equipment</a>
-                <a class="tablink" href="#used" onclick="openTab(event, 'used')">Used Equipment</a>
+                <a class="tablink active" href="#used" onclick="openTab(event, 'used')">Used Equipment</a>
+                <a class="tablink" href="#new" onclick="openTab(event, 'new')">New Equipment</a>
             </nav>
-            <section id="new" class="tabcontent">
+            <section id="used" class="tabcontent">
                 <div class="search-box">
-                    <form action="/results/new" method="get">
-                        <input type="text" name="q" placeholder="Search for new equipment..." required>
+                    <form action="/results/used" method="get">
+                        <input type="text" name="q" placeholder="Search for used equipment..." required>
                         <button type="submit">Search</button>
                     </form>
                 </div>
             </section>
-            <section id="used" class="tabcontent" style="display: none;">
+            <section id="new" class="tabcontent" style="display: none;">
                 <div class="search-box">
-                    <form action="/results/used" method="get">
-                        <input type="text" name="q" placeholder="Search for used equipment..." required>
+                    <form action="/results/new" method="get">
+                        <input type="text" name="q" placeholder="Search for new equipment..." required>
                         <button type="submit">Search</button>
                     </form>
                 </div>
