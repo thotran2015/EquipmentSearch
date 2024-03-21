@@ -23,11 +23,10 @@ def extract_results(item, condition=None):
     else:
         specific_url = util.create_url(MAIN_URL, item,
                                        DELIMITER) + "&condition=Used,Refurbished,For%20Parts/Not%20Working,New%20or%20Used&adtype=998"
-    url = util.create_url(MAIN_URL, item, DELIMITER)
     results = []
     # Check if page has data
     try:
-        soup = util.get_soup(url)
+        soup = util.get_soup(specific_url)
         table = soup.find('tbody', class_='ResultsNewTable')
         rows = table.find_all('tr')
     except:

@@ -1,5 +1,6 @@
 # import the 17 websites
 import threading
+import util
 
 from scraping import dotmed, ebay, biosurplus, daigger, labcommerce, labx, google, equipnet, eurekaspot, \
     marshallscientific, medwow, newlifescientific, sibgene, used_line, sci_bay
@@ -54,11 +55,11 @@ WEBSITES = {"ebay": ebay.extract_results,
             # "eurekaspot": eurekaspot.extract_results,
             # "labcommerce": labcommerce.extract_results,
             # "newlifescientific": newlifescientific.extract_results,
-            "biosurplus": biosurplus.extract_results,
+            # "biosurplus": biosurplus.extract_results,
             "sci_bay": sci_bay.extract_results,
             # "dotmed": dotmed.extract_results,
             "sibgene": sibgene.extract_results,
-            "labx": labx.extract_results,
+            # "labx": labx.extract_results,
             "medwow": medwow.extract_results,
             "marshallscientific": marshallscientific.extract_results,
             "daigger": daigger.extract_results
@@ -78,7 +79,7 @@ def search(website, search_term, condition):
     try:
         site_results = func(search_term, condition)
         for website_result in site_results:
-            if is_close_match(search_term, website_result.title):
+            if util.is_close_match(search_term, website_result.title):
                 results.append(website_result)
             if len(results) >= MAX_RESULTS:
                 return error_message, results
@@ -116,7 +117,7 @@ def search_a_website(website, search_term, results, lock, stop_event, condition=
             # Check if stop event is set
             if stop_event.is_set():
                 return True, error_message
-            if is_close_match(search_term, website_result.title):
+            if util.is_close_match(search_term, website_result.title):
                 # Acquire lock to safely update the results dictionary
                 lock.acquire()
                 results.append(website_result)
@@ -129,19 +130,6 @@ def search_a_website(website, search_term, results, lock, stop_event, condition=
         print(error_message)
     finally:
         return True, error_message
-
-
-def is_close_match(search_term, result_term):
-    """
-    checks if the result contains at least MATCH_RATIO of the search words
-    search_term, result_term are strings
-    """
-    search_words = search_term.split()
-    match_number = 0
-    for word in search_words:
-        if word.lower().strip() in result_term.lower():
-            match_number += 1
-    return match_number >= math.ceil(len(search_words) * MATCH_RATIO)
 
 
 def main():

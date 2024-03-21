@@ -6,6 +6,8 @@ Comments: For new equipment only
 """
 import urllib.request, urllib.error, urllib.parse
 from bs4 import BeautifulSoup
+
+import util
 from util import *
 from Result import Result
 
@@ -18,8 +20,7 @@ def extract_results(item,condition=None):
         if condition != "new":
                 return results
         specific_url = create_url(MAIN_URL,item,DELIMITER)
-        page = urllib.request.urlopen(specific_url)
-        soup = BeautifulSoup(page,"html.parser" )
+        soup = util.get_soup(specific_url)
 
         table = soup.find('div',id ="ListingProducts")
         #Check for data

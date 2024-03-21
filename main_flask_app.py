@@ -40,7 +40,7 @@ def run_search(condition=None):
         threads.append(thread)
 
     # Set a timer to stop threads after 25s, Heroku timeout is 30s
-    timer = threading.Timer(25, stop_event.set)
+    timer = threading.Timer(20, stop_event.set)
     timer.start()
 
     # Wait for all threads to complete or until stop condition is met or until timer expires

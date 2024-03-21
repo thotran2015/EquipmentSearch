@@ -7,6 +7,8 @@ Comment: Assumes all items are used on this website
 
 import urllib.request, urllib.error, urllib.parse
 from bs4 import BeautifulSoup
+
+import util
 from util import *
 from Result import Result
 
@@ -18,8 +20,8 @@ def extract_results(item,condition=None):
         results=[]
         if condition != "new":
                 search_term=get_good_search_term(item)
-                page = urllib.request.urlopen(create_url(search_url,search_term,DELIMITER))
-                soup = BeautifulSoup(page,"html.parser" )
+                url = create_url(search_url,search_term,DELIMITER)
+                soup = util.get_soup(url)
                 table = soup.find_all('td',class_='productname')
                 for row in table:
                         new_result = Result(row.find('a').text)

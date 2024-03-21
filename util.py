@@ -7,6 +7,12 @@ import requests
 from bs4 import BeautifulSoup
 from typing import Optional
 
+MATCH_RATIO = .8
+
+MAX_RESULTS = 10
+
+MIN_RESULTS = 3
+
 
 def get_price(price):
     """
@@ -121,3 +127,16 @@ def median_price(results):
         return prices[(length + 1) // 2]
     # Odd length prices list
     return prices[(length - 1) // 2]
+
+
+def is_close_match(search_term, result_term):
+    """
+    checks if the result contains at least MATCH_RATIO of the search words
+    search_term, result_term are strings
+    """
+    search_words = search_term.split()
+    match_number = 0
+    for word in search_words:
+        if word.lower().strip() in result_term.lower():
+            match_number += 1
+    return match_number >= math.ceil(len(search_words) * MATCH_RATIO)
