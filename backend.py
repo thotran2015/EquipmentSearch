@@ -44,8 +44,10 @@ USED_FUNCS = [equipnet.extract_results,
 # sibgene.extract_results
 # ]
 NEW_FUNCS = [daigger.extract_results, dotmed.extract_results]
-USED_WEBSITES = {"equipnet", "labx", "ebay", "dotmed", "google", "biosurplus", "medwow", "labcommerce",
-                 "marshallscientific", "newlifescientific", "eurekaspot", "sci_bay", "sibgene", "used_line"}
+# USED_WEBSITES = {"equipnet", "labx", "ebay", "dotmed", "google", "biosurplus", "medwow", "labcommerce",
+#                  "marshallscientific", "newlifescientific", "eurekaspot", "sci_bay", "sibgene", "used_line"}
+
+USED_WEBSITES = {"equipnet", "marshallscientific", "sci_bay"}
 NEW_WEBSITES = {"daigger", "ika", "dotmed", "ebay", "google", "labx", "medwow", "ibgene", "coleparmer"}
 
 WEBSITES = {"ebay": ebay.extract_results,
@@ -72,22 +74,12 @@ MAX_RESULTS = 10
 MIN_RESULTS = 3
 
 
-def search(website, search_term, condition):
-    func = WEBSITES.get(website)
-    results = []
-    error_message = ""
-    try:
-        site_results = func(search_term, condition)
-        for website_result in site_results:
-            if util.is_close_match(search_term, website_result.title):
-                results.append(website_result)
-            if len(results) >= MAX_RESULTS:
-                return error_message, results
-    except Exception as e:
-        error_message = f"Error scraping {website}: {e}"
-        print(error_message)
-    finally:
-        return error_message, results
+def verify_site(website, condition):
+    if condition == 'used' and website not in USED_WEBSITES:
+        return False, "This site does not sell used equipment"
+    if condition == 'new' and website not in NEW_WEBSITES:
+        return False, "This site does not sell new equipment"
+    return True, ""
 
 
 def search_a_website(website, search_term, results, lock, stop_event, condition='used') -> (bool, str):
@@ -132,27 +124,45 @@ def search_a_website(website, search_term, results, lock, stop_event, condition=
         return True, error_message
 
 
-def main():
+def search_all_websites(keywords, condition='used') -> (bool, str, list):
     lock = threading.Lock()
     stop_event = threading.Event()
     threads = []
     results = []
     start = time.time()
-    keywords = "vacuum"
-    condition = 'used'
-    for website in USED_WEBSITES:
-        thread = threading.Thread(target=search_a_website, args=(website, keywords, results, lock, stop_event, condition))
+    websites = USED_WEBSITES if condition == 'used' else NEW_WEBSITES
+    for website in websites:
+        ok, err = verify_site(website, condition)
+        if not ok:
+            print(err)
+            continue
+        extract_func = WEBSITES.get(website)
+        if extract_func is None:
+            print(f"No scraping func for this site {website}")
+            continue
+        thread = threading.Thread(target=extract_func, args=(keywords, results, lock, stop_event, condition))
         thread.start()
         threads.append(thread)
+
+    # Set a timer to stop threads after 25s, Heroku timeout is 30s
+    timer = threading.Timer(20, stop_event.set)
+    timer.start()
 
     # Wait for all threads to complete or until stop condition is met
     for t in threads:
         t.join()  # Wait for this thread to terminate
         if len(results) >= MAX_RESULTS:
             break
+    # Cancel timer if it has not expired
+    timer.cancel()
 
     print("Time elapsed: ", time.time()-start)
     print("Results: ", results)
+    return True, "", results
+
+
+def main():
+    search_all_websites('centrifuge', 'used')
 
 
 if __name__ == "__main__":

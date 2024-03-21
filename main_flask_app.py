@@ -28,28 +28,7 @@ def display_search_page(condition=None):
 @app.route('/results/<condition>/')
 def run_search(condition=None):
     search_words = request.args.get('q')
-    results = []
-    threads = []
-    lock = threading.Lock()
-    stop_event = threading.Event()
-    websites = backend.USED_WEBSITES if condition == 'used' else backend.NEW_WEBSITES
-    for site in websites:
-        thread = threading.Thread(target=backend.search_a_website,
-                                  args=(site, search_words, results, lock, stop_event, condition))
-        thread.start()
-        threads.append(thread)
-
-    # Set a timer to stop threads after 25s, Heroku timeout is 30s
-    timer = threading.Timer(20, stop_event.set)
-    timer.start()
-
-    # Wait for all threads to complete or until stop condition is met or until timer expires
-    for t in threads:
-        t.join()  # Wait for this thread to terminate
-        if len(results) >= 10:
-            break
-    # Cancel timer if it has not expired
-    timer.cancel()
+    _, _, results = backend.search_all_websites(search_words, condition)
 
     # Sort results by price
     results = util.sort_by_price(results)

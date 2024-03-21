@@ -11,6 +11,8 @@ import util
 from Result import Result
 import requests
 
+from scraping.ScraperInterface import ScraperInterface
+
 MAIN_URL = "http://sibgene.com/index.php/catalogsearch/result/?q="
 DELIMITER = "+"
 

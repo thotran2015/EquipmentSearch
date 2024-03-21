@@ -1,8 +1,6 @@
 import re
 import string
-import numpy
 import math
-from Result import *
 import requests
 from bs4 import BeautifulSoup
 from typing import Optional

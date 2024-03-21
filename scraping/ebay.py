@@ -24,7 +24,7 @@ def extract_results(search_term, condition=None):
     table = soup.find('div', id='ResultSetItems')
     try:
         rows = table.findAll('li', class_='sresult lvresult clearfix li')
-    except:
+    except Exception as e:
         return []
     results = []
     for row in rows:

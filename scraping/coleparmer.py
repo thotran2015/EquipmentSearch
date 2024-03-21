@@ -15,7 +15,8 @@ DELIMITER = '+'
 HOME_URL = 'https://www.coleparmer.com'
 
 
-def extract_results(search_word, results, lock, stop_event, condition='used'):
+def extract_results(search_word: str, results: list, lock: threading.Lock, stop_event: threading.Event,
+                    condition: str = 'used'):
     url = util.create_url(MAIN_URL, search_word, DELIMITER)
     print(url)
     soup = util.get_soup(url)

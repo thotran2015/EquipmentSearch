@@ -12,12 +12,12 @@ import threading
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
 MAIN_URL = "http://www.marshallscientific.com/searchresults.asp?Search="
 DELIMITER = '+'
 
 
-def extract_results(search_word, results, lock, stop_event, condition='used'):
+def extract_results(search_word: str, results: list, lock: threading.Lock, stop_event: threading.Event,
+                    condition: str = 'used'):
     if condition == "new":
         return []
     url = util.create_url(MAIN_URL, search_word, DELIMITER)
