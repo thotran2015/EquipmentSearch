@@ -47,7 +47,7 @@ NEW_FUNCS = [daigger.extract_results, dotmed.extract_results]
 # USED_WEBSITES = {"equipnet", "labx", "ebay", "dotmed", "google", "biosurplus", "medwow", "labcommerce",
 #                  "marshallscientific", "newlifescientific", "eurekaspot", "sci_bay", "sibgene", "used_line"}
 
-USED_WEBSITES = {"equipnet", "marshallscientific", "sci_bay"}
+USED_WEBSITES = {"equipnet", "marshallscientific", "sci_bay", "labx"}
 NEW_WEBSITES = {"daigger", "ika", "dotmed", "ebay", "google", "labx", "medwow", "ibgene", "coleparmer"}
 
 WEBSITES = {"ebay": ebay.extract_results,
@@ -61,7 +61,7 @@ WEBSITES = {"ebay": ebay.extract_results,
             "sci_bay": sci_bay.extract_results,
             # "dotmed": dotmed.extract_results,
             "sibgene": sibgene.extract_results,
-            # "labx": labx.extract_results,
+            "labx": labx.extract_results,
             "medwow": medwow.extract_results,
             "marshallscientific": marshallscientific.extract_results,
             "daigger": daigger.extract_results

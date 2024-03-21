@@ -4,50 +4,68 @@ Website: LabX
 Status: Complete
 Comment: For both new and used equipment
 """
-
+import threading
 import urllib.request, urllib.error, urllib.parse
 from bs4 import BeautifulSoup
 import util
 from Result import Result
 import requests
 
+BASE_URL = "https://www.labx.com"
 MAIN_URL = "https://www.labx.com/search?sw="
 # MAIN_URL = "http://www.labx.com/v2/adsearch/search.cfm?sw="
 DELIMITER = "+"
 
 
-def extract_results(item, condition=None):
+def extract_results(search_word: str, results: list, lock: threading.Lock, stop_event: threading.Event, condition='used'):
     # Url is extended based on condition
     if condition == "new":
-        specific_url = util.create_url(MAIN_URL, item, DELIMITER) + "&condition=New,New%20or%20Used&adtype=998"
+        specific_url = util.create_url(MAIN_URL, search_word, DELIMITER) + "&condition=468_New"
     else:
-        specific_url = util.create_url(MAIN_URL, item,
-                                       DELIMITER) + "&condition=Used,Refurbished,For%20Parts/Not%20Working,New%20or%20Used&adtype=998"
-    results = []
+        specific_url = util.create_url(MAIN_URL, search_word,
+                                       DELIMITER) + "&condition=467_Used%2C469_Refurbished"
     # Check if page has data
     try:
         soup = util.get_soup(specific_url)
-        table = soup.find('tbody', class_='ResultsNewTable')
-        rows = table.find_all('tr')
-    except:
-        return []
+        table = soup.find('div', class_='grid-right-results')
+        rows = table.find_all('a')
+    except Exception as e:
+        print(f"Error scraping {specific_url}: {e}")
+        return
+
     # Get 1st 10 results only
-    for i in range(len(rows)):
-        row = rows[i]
-        new_result = Result(row.find('a').get('title'))
-        new_result.url = row.find('a').get('href')
-        new_result.price = util.get_price(row.find_all('td')[4].contents[0])
-        number = util.get_price(new_result.title)
-        new_result.image_src = "https://photos.labx.com/labx/" + number + "/" + number + "-0.jpg"
-        if util.is_valid_price(new_result.price):
-            results.append(new_result)
-            if len(results) == 10:
-                return results
-    return results
+    for row in rows:
+        if stop_event.is_set():
+            break
+        try:
+            title = row.find('div', class_="card-text-name").text.strip()
+            url = row.get('href')
+            url = BASE_URL + url
+            img_src = row.find('img').get('src')
+            price = row.find('div', class_="card-text-price")
+            if not price:
+                continue
+            price = util.get_price(price.text.strip())
+            if not util.is_valid_price(price):
+                continue
+            res = Result(title, url, price, img_src)
+            lock.acquire()
+            results.append(res)
+            lock.release()
+            if len(results) >= util.MAX_RESULTS:
+                stop_event.set()
+                break
+        except Exception as e:
+            print(f"Error scraping {row}: {e}")
+    return
 
 
 def main():
-    print(extract_results("vacuum pump", "new"))
+    lock = threading.Lock()
+    stop_event = threading.Event()
+    results = []
+    extract_results('vacuum', results, lock, stop_event, 'used')
+    print(results)
 
 
 if __name__ == "__main__":
